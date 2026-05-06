@@ -1,0 +1,456 @@
+Book Store Ecommerce 
+
+Backend 
+
+1) npm init -y
+
+2) npm i express mysql2
+
+3) npm i bcrypt
+
+4) npm i jsonwebtoken
+
+5) npm i cord
+
+
+Database (MySQL):
+create database bookStore;
+Table :
+	users (user_id , name , email , password , role , created_at)
+	books(book_id , title , author , price , description , image_url , stock , created_at)
+	cart(cart_id , user_id , created_at)                                   // user_id references users(user_id)
+	cart_items(cart_item_id , cart_id , book_id , quantity)                // cart_id references cart(cart_id)        // book_id references books(book_id)
+	orders(order_id , user_id , total_amount , status , created_at )       // user_id references users(user_id)
+	order_items(order_item_id , order_id , book_id , quantity , price )    // order_id references orders(order_id)    // book_id references books(book_id)
+	payments(payment_id , order-id , payment_method , payment_status , transaction_id , payment_date)                 // order_id references orders(order_id)
+	contact_messages(message_id , email , subject , message , created_at); 
+	 
+
+
+Backend API testing :
+1)) Auth 
+
+ 
+User SignUp 
+-- Creates a new user (role = user)
+POST : http://localhost:9001/auth/signup
+Body:
+{
+  "name": "Sumit",
+  "email": "sumit@gmail.com",
+  "password": "123456"
+}
+Response: 
+{
+   "insertedId":2
+}
+
+-- Login Admin / User
+POST : http://localhost:9001/auth/signin
+Body:
+{
+  "email": "sumit@gmail.com",
+  "password": "123456"
+}
+Response :
+{
+  "message": "Login Successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc3OTQ2Mzg4fQ.G7aLE-UkdyydAyaqg4UNGoWKi4Bx9rG9viYSt7k01UI",
+  "role": "user"
+}
+
+User Token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc3OTQ2Mzg4fQ.G7aLE-UkdyydAyaqg4UNGoWKi4Bx9rG9viYSt7k01UI
+
+For that specific User 
+Headers :
+Authorization   Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc3OTQ2Mzg4fQ.G7aLE-UkdyydAyaqg4UNGoWKi4Bx9rG9viYSt7k01UI
+
+2))  User
+-- To get profile
+GET : http://localhost:9001/users/profile
+Token : User Token 
+Response :
+{
+  "user_id": 2,
+  "name": "Sumit",
+  "email": "sumit@gmail.com"
+}
+
+-- To Update Profile
+PUT : http://localhost:9001/users/profile
+Token : user token
+Body :
+{
+  "name": "Sumit Patil"
+}
+Response : 
+{
+  "message": "Profile Updated"
+}
+
+For all Admin operations , Admin Token  : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3Nzk0NzQxNH0.V1Ws_iN-2DaT9xDKX9xy1yvPWh4eAzFROtOpaG2PQW8
+3)) Admin
+-- To get Admin Token 
+POST : http://localhost:9001/auth/signin
+Body:
+{
+  "email": "admin@bookstore.com",
+  "password": "admin123"
+} 
+Response : 
+{
+  "message": "Login Successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3Nzk0NzQxNH0.V1Ws_iN-2DaT9xDKX9xy1yvPWh4eAzFROtOpaG2PQW8",
+  "role": "admin"
+}
+
+
+4)) Book 
+-- To add Book
+POST : http://localhost:9001/books
+Token: Admin Token
+Body : 
+{
+  "title": "Atomic Habits",
+  "author": "James Clear",
+  "price": 499
+}
+Response : 
+{
+  "message": "Book Added"
+}
+
+-- To get Books
+GET : http://localhost:9001/books
+No Token 
+Response :
+[
+  {
+    "book_id": 1,
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "price": "499.00",
+    "description": null,
+    "image_url": null,
+    "stock": 0,
+    "created_at": "2026-05-05T02:20:10.000Z"
+  }
+]
+
+-- To update Book
+PUT : http://localhost:9001/books/1
+Token : Admin token
+Body : 
+{
+  "title": "Atomic Habits Updated",
+  "author": "James Clear",
+  "price": 599
+}
+Response :
+{
+  "message": "Updated"
+}
+
+
+-- To delete Book 
+DELETE  : http://localhost:9001/books/2
+Token : Admin token
+Response : 
+{
+  "message": "Deleted"
+}
+
+** Search Book 
+GET : http://localhost:9001/books/search/all?title=Atomic
+or 
+GET : http://localhost:9001/books/search/all?title=Atomic&author=James
+[
+  {
+    "book_id": 1,
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "price": "499.00"
+  }
+]
+
+
+4)) Cart
+-- Add to cart
+POST : http://localhost:9001/cart/add
+Header : User Token
+Body:
+{
+  "book_id": 1
+}
+Response :
+{
+  "message": "Added to Cart"
+}
+
+-- View Cart
+GET : http://localhost:9001/cart
+Header : User Token
+Body :
+{
+  "book_id": 1
+}
+Response :
+[
+  {
+    "cart_item_id": 1,
+    "title": "Atomic Habits",
+    "price": "499.00"
+  }
+]
+
+-- Remove from Cart
+Delete : http://localhost:9001/cart/1
+Header : User Token
+Response :
+{
+  "message": "Item Removed"
+}
+
+
+5)) Orders
+-- Place Order 
+POST : http://localhost:9001/orders/place
+Body : No 
+Header : User Token
+Response :
+{
+  "message": "Order Placed",
+  "orderId": 1
+}
+
+-- Orders Placed by Users  
+GET : http://localhost:9001/orders/my-orders
+Header : User Token
+Response :
+[
+  {
+    "order_id": 1,
+    "total_amount": 500,
+    "order_status": "pending",
+    "created_at": "2026-05-05T10:20:00.000Z",
+    "payment_status": "completed",
+    "payment_method": "COD"
+  }
+]
+
+-- Cancel Order
+DELETE : http://localhost:9001/orders/1
+Header : User Token
+Response :
+{
+  "message": "Order Cancelled"
+}
+
+
+6)) Payments
+-- Make payments
+POST : http://localhost:9001/payments/pay
+Header : User Token
+Body :
+{
+  "order_id": 1
+}
+Response :
+{
+  "message": "Payment Successful"
+}
+
+7) Get all User List for admin
+GET : http://localhost:9001/users/all
+Header : Admin Token
+Response :
+[
+  {
+    "user_id": 2,
+    "name": "Sumit",
+    "email": "sumit@gmail.com"
+  }
+]
+
+8) Contact API 
+POST : http://localhost:9001/contact
+Body :
+{
+  "email": "sumit@gmail.com",
+  "subject": "Book Query",
+  "message": "When will Atomic Habits be available?"
+}
+Response :
+{
+  "message": "Message Sent"
+}
+
+
+In Frontend 
+
+1) npm i axios 
+
+2) npm i react-router-dom 
+
+3) npm i react-bootstrap bootstrap 
+
+4) npm i react-router-bootstrap 
+
+5) npm i react-hook-form
+
+6) npm i yup 
+
+7) npm i @hookform/resolver
+
+8) npm i --save react-toastify 
+
+
+
+Execution Flow 
+1)  SignIn flow 
+SignIn.jsx
+    ↓
+authService.js
+    ↓
+Backend /auth/signin
+    ↓
+JWT token + role received
+    ↓
+localStorage stores token + role
+    ↓
+navigate("/admin/home")
+OR
+navigate("/user/home")
+
+2) SignUp Flow
+SignUp.jsx
+    ↓
+authService.js
+    ↓
+Backend /auth/signup
+    ↓
+User stored in DB
+    ↓
+navigate("/signin")
+
+3) Admin Add Book 
+AdminHome.jsx
+    ↓
+react-hook-form validation
+    ↓
+adminService.js
+    ↓
+POST /books
+    ↓
+MySQL
+    ↓
+toast.success()
+    ↓
+fetchBooks()
+    ↓
+table refresh
+
+4) Admin Book Delete Flow
+Delete Button
+    ↓
+Modal Opens
+    ↓
+Confirm Yes
+    ↓
+DELETE /books/:id
+    ↓
+MySQL Delete
+    ↓
+Toast Success
+    ↓
+Reload Table
+
+5) Admin Book Update Flow
+Edit Button
+    ↓
+navigate("/admin/update-book/1")
+    ↓
+UpdateBook.jsx
+    ↓
+GET /books/:id
+    ↓
+Fill Form
+    ↓
+Update Button
+    ↓
+PUT /books/:id
+    ↓
+Redirect Admin Home
+
+6) User Book Search Flow 
+UserHome.jsx
+    ↓
+Search Form Submit
+    ↓
+GET /books/search
+    ↓
+Filtered Books
+    ↓
+Book Cards Updated
+
+7) User Book add to Cart flow
+Add To Cart Button
+    ↓
+POST /cart
+    ↓
+MySQL Cart Insert
+    ↓
+Toast Success
+
+8) Payment Flow
+Proceed To Payment
+    ↓
+POST /orders
+    ↓
+Order Created
+    ↓
+POST /payments
+    ↓
+Payment Success
+    ↓
+Toast
+
+9) Cancel order Flow
+Cancel Button
+    ↓
+DELETE /orders/:id
+    ↓
+DB Delete
+    ↓
+Reload Orders
+
+10) Profile Flow
+Profile.jsx
+    ↓
+GET /users/profile
+    ↓
+Fill Form
+    ↓
+Edit Button
+    ↓
+Enable Form
+    ↓
+PUT /users/profile
+    ↓
+Toast Success
+
+11) Contact flow
+Contact.jsx
+    ↓
+react-hook-form validation
+    ↓
+POST /contact
+    ↓
+Toast Success
+
+12) User List flow
+UserList.jsx
+    ↓
+GET /users/all
+    ↓
+Display Table
