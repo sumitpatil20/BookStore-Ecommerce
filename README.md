@@ -754,6 +754,12 @@ Password: admin123
 ```
 
 ---
+---
+## Screenshots 
+
+#
+![alt text](<Screenshot 2026-05-07 074751.png>) !
+[alt text](<Screenshot 2026-05-07 074737.png>) ![alt text](<Screenshot 2026-05-07 074725.png>) ![alt text](<Screenshot 2026-05-07 074712.png>) ![alt text](<Screenshot 2026-05-07 074654.png>) ![alt text](<Screenshot 2026-05-07 074631.png>) ![alt text](<Screenshot 2026-05-07 074616.png>) ![alt text](<Screenshot 2026-05-07 074602.png>) ![alt text](<Screenshot 2026-05-07 074530.png>) ![alt text](<Screenshot 2026-05-07 074517.png>) ![alt text](<Screenshot 2026-05-07 074501.png>) ![alt text](<Screenshot 2026-05-07 074444.png>) ![alt text](<Screenshot 2026-05-07 074432.png>) ![alt text](<Screenshot 2026-05-07 074418.png>) ![alt text](<Screenshot 2026-05-07 074404.png>) ![alt text](<Screenshot 2026-05-07 074255.png>) ![alt text](<Screenshot 2026-05-07 074242.png>) ![alt text](<Screenshot 2026-05-07 074228.png>) ![alt text](<Screenshot 2026-05-07 074214.png>) ![alt text](<Screenshot 2026-05-07 074159.png>) ![alt text](<Screenshot 2026-05-07 074144.png>) ![alt text](<Screenshot 2026-05-07 074129.png>) ![alt text](<Screenshot 2026-05-07 074110.png>) ![alt text](<Screenshot 2026-05-07 074053.png>) ![alt text](<Screenshot 2026-05-07 074014.png>) ![alt text](<Screenshot 2026-05-07 073943.png>) ![alt text](<Screenshot 2026-05-06 123534.png>) ![alt text](<Screenshot 2026-05-06 122650.png>)
 
 # 🌟 Future Improvements
 
